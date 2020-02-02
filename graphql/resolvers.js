@@ -1,3 +1,4 @@
+const User = require('../models/user');
 const Performer = require('../models/performer');
 
 module.exports = {
