@@ -23,5 +23,16 @@ module.exports = {
             userName: user.userName,
             password: user.password
         }   
-    }
+    },
+    createUser: async function({ email, password, name, userName }, req) {
+        const user = new User({
+          email: email,
+          name: name,
+          password: password,
+          userName: userName
+        });
+        const createdUser = await user.save();
+        return { ...createdUser._doc, _id: createdUser._id.toString() };
+      }
+
   };
