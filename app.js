@@ -33,8 +33,7 @@ app.use(
     schema: graphqlSchema,
     rootValue: graphqlResolver,
     graphiql: true,
-    formatError(err) {
-      console.log(err)
+    customFormatErrorFn(err) {
       if (!err.originalError) {
         return err;
       }

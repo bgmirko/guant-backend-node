@@ -29,7 +29,8 @@ module.exports = buildSchema(`
     type RootMutation {
         createUser(email: String!, password: String!, name: String!, userName: String!): User!
         createPerformer(name: String!, age: String!, category: String!): Performer
-        deletePerformer(_id: String): Performer
+        deletePerformer(_id: String): Boolean
+        editPerformer(_id: ID!, name: String!, age: String!, category: String!): Boolean
     }
 
     schema {

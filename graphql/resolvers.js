@@ -42,7 +42,6 @@ module.exports = {
     },
     getPerformers: async function() {
         const performers = await Performer.find();
-        console.log(performers);
         return {
             performers: performers.map(p => {
             return {
@@ -54,19 +53,14 @@ module.exports = {
           })
         };
       },
-      deletePerformer: async function(_id) {
-        const performers = await Performer.deleteOne({_id: _id});
-        console.log(performers);
-        return {
-            performers: performers.map(p => {
-            return {
-              ...p._doc,
-              _id: p._id.toString(),
-              name: p.name,
-              age: p.age
-            };
-          })
-        };
+      deletePerformer: async function(_id, req) {
+        await Performer.deleteOne({_id: _id});
+        return true
+      },
+      editPerformer: async function({_id, name, age, category}, req) {
+        await Performer.updateMany(
+            {'_id' : _id},
+            {"$set":{"name" : name, "age" : age, "category" : category}});
+        return true;
       }
-
   };
