@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const graphqlHttp = require('express-graphql');
 
-// const errorController = require('./controllers/error');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
 
@@ -46,14 +45,6 @@ app.use(
     }
   })
 );
-
-// app.use((error, req, res, next) => {
-//   console.log(error);
-//   const status = error.statusCode || 500;
-//   const message = error.message;
-//   const data = error.data;
-//   res.status(status).json({ message: message, data: data });
-// });
 
 mongoose
   .connect(

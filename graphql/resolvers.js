@@ -1,5 +1,5 @@
 
-const User = require('../models/user');
+const Performer = require('../models/performer');
 
 module.exports = {
     getUser: async function({ email, password }) {
@@ -10,7 +10,6 @@ module.exports = {
             error.code = 401;
             throw error;
         }
-        //   const isEqual = await bcrypt.compare(password, user.password);
         if (password !== user.password) {
             const error = new Error('Password is incorrect.');
             error.code = 401;
@@ -33,6 +32,16 @@ module.exports = {
         });
         const createdUser = await user.save();
         return { ...createdUser._doc, _id: createdUser._id.toString() };
-      }
+    },
+    createPerformer: async function({ name, age, category }, req) {
+        console.log(age);
+        const performer = new Performer({
+          name: name,
+          age: age,
+          category: category
+        });
+        const createdPerformer = await performer.save();
+        return { ...createdPerformer._doc, _id: createdPerformer._id.toString() };
+    }
 
   };
