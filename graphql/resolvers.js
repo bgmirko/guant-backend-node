@@ -1,11 +1,9 @@
-
 const Performer = require('../models/performer');
 
 module.exports = {
     getUser: async function({ email, password }) {
         const user = await User.findOne({ email: email });
         if (!user) {
-            console.log("usao u error")
             const error = new Error('User not found.');
             error.code = 401;
             throw error;
@@ -34,7 +32,6 @@ module.exports = {
         return { ...createdUser._doc, _id: createdUser._id.toString() };
     },
     createPerformer: async function({ name, age, category }, req) {
-        console.log(age);
         const performer = new Performer({
           name: name,
           age: age,
@@ -42,6 +39,34 @@ module.exports = {
         });
         const createdPerformer = await performer.save();
         return { ...createdPerformer._doc, _id: createdPerformer._id.toString() };
-    }
+    },
+    getPerformers: async function() {
+        const performers = await Performer.find();
+        console.log(performers);
+        return {
+            performers: performers.map(p => {
+            return {
+              ...p._doc,
+              _id: p._id.toString(),
+              name: p.name,
+              age: p.age
+            };
+          })
+        };
+      },
+      deletePerformer: async function(_id) {
+        const performers = await Performer.deleteOne({_id: _id});
+        console.log(performers);
+        return {
+            performers: performers.map(p => {
+            return {
+              ...p._doc,
+              _id: p._id.toString(),
+              name: p.name,
+              age: p.age
+            };
+          })
+        };
+      }
 
   };
