@@ -1,56 +1,67 @@
 const path = require('path');
 
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const graphqlHttp = require('express-graphql');
 
 // const errorController = require('./controllers/error');
-const User = require('./models/user');
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
 
 const app = express();
 
-// app.set('view engine', 'ejs');
-// app.set('views', 'views');
+// Allow cross-origin
+app.use(cors());
 
-// const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
-
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('5e354cb21c9d440000602b97')
-    .then(user => {
-      console.log(user);
-      req.user = user;
-      next();
-    })
-    .catch(err => console.log(err));
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
 });
 
-// app.use('/admin', adminRoutes);
-// app.use(shopRoutes);
+app.use(
+  '/graphql',
+  graphqlHttp({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+    graphiql: true,
+    formatError(err) {
+      console.log(err)
+      if (!err.originalError) {
+        return err;
+      }
+      const data = err.originalError.data;
+      const message = err.message || 'An error occurred.';
+      const code = err.originalError.code || 500;
+      return { message: message, status: code, data: data };
+    }
+  })
+);
 
-// app.use(errorController.get404);
+// app.use((error, req, res, next) => {
+//   console.log(error);
+//   const status = error.statusCode || 500;
+//   const message = error.message;
+//   const data = error.data;
+//   res.status(status).json({ message: message, data: data });
+// });
 
 mongoose
   .connect(
-    'mongodb+srv://mirko:@cluster0-hpaeh.mongodb.net/quantox?retryWrites=true&w=majority'
+    'mongodb+srv://mirko:quantox2020@cluster0-hpaeh.mongodb.net/quantox?retryWrites=true&w=majority'
   )
   .then(result => {
-    console.log("connected to mongoDb")
-    User.findOne().then(user => {
-      if (!user) {
-        const user = new User({
-          name: 'mirko',
-          email: 'mirko@test.fk',
-          userName: 'mirko2020',
-          password: 'password2020'
-        });
-        user.save();
-      }
-    });
-    app.listen(3000);
+      console.log("connected to mongoDb")
+      app.listen(5000);
   })
   .catch(err => {
     console.log(err);
